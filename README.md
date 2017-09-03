@@ -13,7 +13,7 @@ npm Installation Instructions:
 
 	$ npm install [--save] thaw-http-json-request
 
-Note: The command "grunt" runs lint and security tests.
+Note: The command "grunt" runs lint, unit tests, and security tests.
 
 API:
 
@@ -25,9 +25,10 @@ API:
 		- port: The TCP/IP port of the Web server to which to send the request. No default value.
 		- path: The path on the Web server to which to send the request. Defaults to '/'.
 		- noHttps: Set to true if you wish to send the request via HTTP rather than HTTPS. Defaults to false.
+		- headers: Additional key/value pairs to send as part of the HTTP[S] GET request. No default value.
 		- verbose: If true, log informational messages via console.log(). Defaults to false.
-		- preprocessRawResponseData(rawData) : 
-		- preprocessJsonResponseData(jsonData) : 
+		- preprocessRawResponseData(rawData) : A function that transforms the body of the HTTP[S] response as text, before it is parsed as JSON. No default value.
+		- preprocessJsonResponseData(jsonData) : A function that transforms the JSON value after parsing and before it is returned. No default value.
 
 	- Returns: A promise from the npm package "q" :
 		- See https://www.npmjs.com/package/q
@@ -38,9 +39,9 @@ Sample usage of the npm package:
 	let httpJsonRequest = require('thaw-http-json-request');
 	let descriptor = {
 		noHttps: true,
-		host: 'localhost',
-		port: 3000,
-		path: '/tictactoe/EEEEXEEEO/6'
+		host: 'ip.jsontest.com',
+		path: '/?callback=showMyIP',
+		preprocessRawResponseData: /^showMyIP\(([\s\S]*)\)\;\n$/
 	};
 
 	httpJsonRequest
@@ -57,8 +58,4 @@ Output:
 
 	httpJsonRequest.get() succeeded! Returned JSON data is:
 
-	{ bestRow: 0,
-	  bestColumn: 1,
-	  bestMoveList: [ { row: 0, column: 1 } ],
-	  bestScore: 1,
-	  player: 'O' }
+	{ ip: '100.150.200.250' }

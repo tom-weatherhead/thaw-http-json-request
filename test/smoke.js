@@ -15,49 +15,31 @@ function runTest (descriptor) {
 		})
 		.fail(error => {
 			console.error('httpJsonRequest.get() returned an error:\n\n', error, '\n');
+			console.error('error.statusCode:', error.statusCode);
+			console.error('error.statusMessage:', error.statusMessage);
 		})
 		.done();
 }
 
-// Test 1 : Tic-Tac-Toe
-
-// runTest({
-	// noHttps: true,
-	// host: 'localhost',
-	// port: 3000,
-	// path: '/tictactoe/EEEEXEEEO/6'
-// });
-
-// Test 2 : Google Finance stock quote information
-
-// let stockSymbols = ['AAPL', 'GOOG', 'MSFT'];
-
-// runTest({
-	// verbose: true,
-	// host: 'www.google.com',
-	// path: '/finance/info?q=NASDAQ%3a' + stockSymbols.join(),
-	// preprocessRawResponseData: rawData => {
-		// If rawData begins with "\n//\s", then remove it.
-		
-		// var rawDataGooglePrefixMatch = /^\n\/\/\s(.*)$/.exec(rawData);		// In Perl regular expressions, . does not include newlines...
-		// var rawDataGooglePrefixMatch = /^\n\/\/\s([\s\S]*)$/.exec(rawData);		// but [\s\S] (any whitespace or any non-whitespace) does.
-
-		// if (rawDataGooglePrefixMatch != null && rawDataGooglePrefixMatch.length == 2) {
-			// rawData = rawDataGooglePrefixMatch[1];
-		// }
-
-		// return rawData;
-	// }
-// });
-
-// Test 3 : 
+// Test 1 : 
 
 // http://ip.jsontest.com/?callback=showMyIP
 
 runTest({
-	verbose: true,
+	// verbose: true,
 	noHttps: true,
 	host: 'ip.jsontest.com',
 	path: '/?callback=showMyIP',
 	preprocessRawResponseData: /^showMyIP\(([\s\S]*)\)\;\n$/
+});
+
+// Test 2 : 
+
+// http://ip.jsontest.com/?callback=foo
+
+runTest({
+	// verbose: true,
+	noHttps: true,
+	host: 'www.jsontest.com',
+	path: '/foo'
 });

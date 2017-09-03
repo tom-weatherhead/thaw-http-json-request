@@ -1,6 +1,8 @@
 // thaw-http-json-request/src/main.js
 
-var Q = require('q');	// Promises for JavaScript. See https://www.npmjs.com/package/q and https://github.com/kriskowal/q
+'use strict';
+
+const Q = require('q');	// Promises for JavaScript. See https://www.npmjs.com/package/q and https://github.com/kriskowal/q
 
 module.exports = {
 
@@ -25,6 +27,10 @@ module.exports = {
 
 		if (descriptor.port) {
 			requestParameters.port = descriptor.port;
+		}
+
+		if (descriptor.headers) {
+			requestParameters.headers = descriptor.headers;
 		}
 
 		// console.log('requestParameters is', requestParameters);
@@ -55,17 +61,23 @@ module.exports = {
 			if (statusCode !== 200) {
 				// error = new Error(`HTTP request to financial data service failed.\nHTTP status code: ${statusCode}`);
 				error = new Error('HTTP[S] request to Web service failed.\nHTTP[S] status: ' + statusCode + ' ' + statusMessage);
+				error.statusCode = response.statusCode;
+				error.statusMessage = response.statusMessage;
 			// } else if (!/^application\/json/.test(contentType)) {
 				// Google Finance does not respond with application/json.
 				// error = new Error(`Invalid content-type.\nExpected application/json but received ${contentType}`);
 			}
 
 			if (error) {
-				var errorMessage = 'Error in https-json-request.service: ' + error.message;
+				// var errorMessage = 'Error in https-json-request.service: ' + error.message;
 
-				console.error(errorMessage);
+				// console.error(errorMessage);
+				// console.error(error);
 				response.resume();				// Consume the response data to free up memory.
-				deferred.reject(errorMessage);
+				// deferred.reject(errorMessage);
+				deferred.reject(error);
+
+				return;
 			}
 
 			response.setEncoding('utf8');
