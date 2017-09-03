@@ -1,0 +1,51 @@
+{
+  "name": "thaw-http-json-request",
+  "version": "0.0.0",
+  "description": "A library for sending requests to Web services and handling JSON responses.",
+  "main": "src/main.js",
+  "homepage": "https://github.com/tom-weatherhead/thaw-http-json-request#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tom-weatherhead/thaw-http-json-request.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tom-weatherhead/thaw-http-json-request/issues"
+  },
+  "scripts": {
+    "lint": "grunt eslint",
+    "mocha": "grunt mochaTest",
+    "nsp": "grunt nsp",
+    "smoke": "node test/smoke.js",
+    "test": "grunt test",
+    "watch": "grunt watch"
+  },
+  "dependencies": {
+    "q": "^1.5.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "grunt": "^1.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-eslint": "^20.1.0",
+    "grunt-nsp": "^2.3.1"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "keywords": [
+    "chai",
+    "eslint",
+    "grunt",
+    "json",
+    "mocha",
+    "node",
+    "nsp"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Tom Weatherhead",
+    "url": "https://github.com/tom-weatherhead"
+  }
+}
