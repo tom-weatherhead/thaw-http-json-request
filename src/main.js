@@ -7,7 +7,16 @@ module.exports = {
 	get: (descriptor = {}) => {
 		let deferred = Q.defer();
 
-		console.log('descriptor is', descriptor);
+		let logFunction;
+
+		if (descriptor.verbose) {
+			logFunction = console.log;
+		} else {
+			logFunction = () => {};
+		}
+
+		// console.log('descriptor is', descriptor);
+		logFunction('descriptor is', descriptor);
 
 		let requestParameters = {
 			host: descriptor.host || 'localhost',
@@ -18,7 +27,8 @@ module.exports = {
 			requestParameters.port = descriptor.port;
 		}
 
-		console.log('requestParameters is', requestParameters);
+		// console.log('requestParameters is', requestParameters);
+		logFunction('requestParameters is', requestParameters);
 
 		let http_or_https;
 
@@ -29,15 +39,16 @@ module.exports = {
 		}
 
 		/* let request = */ http_or_https.get(requestParameters, response => {
-			console.log('The response from the Web service is:', response);
+			// console.log('The response from the Web service is:', response);
+			logFunction('The response from the Web service is:', response);
 
 			const statusCode = response.statusCode;
 			const statusMessage = response.statusMessage;
 			const contentType = response.headers['content-type'];
 
-			console.log('Response: Status code:', statusCode, statusMessage);
-			// console.log('Response: Headers:', response.headers);
-			console.log('Response: Content type:', contentType);
+			logFunction('Response: Status code:', statusCode, statusMessage);
+			// logFunction('Response: Headers:', response.headers);
+			logFunction('Response: Content type:', contentType);
 
 			let error;
 
@@ -67,11 +78,29 @@ module.exports = {
 
 			response.on('end', () => {
 				try {
-					// console.log('The raw data from the Web service response is:', rawData);
+					logFunction('The raw data from the Web service response is:', rawData);
+
+					// See https://stackoverflow.com/questions/4339288/typeof-for-regexp :
+					if (descriptor.preprocessRawResponseData instanceof RegExp) {
+						var rawDataRexExMatch = descriptor.preprocessRawResponseData.exec(rawData);
+
+						if (rawDataRexExMatch !== null && rawDataRexExMatch.length === 2) {
+							rawData = rawDataRexExMatch[1];
+							logFunction('rawData is now', rawData);
+						}
+					} else if (typeof descriptor.preprocessRawResponseData === 'function') {
+						rawData = descriptor.preprocessRawResponseData(rawData);
+						logFunction('The raw data from the Web service response after preprocessing is:', rawData);
+					}
 
 					let jsonData = JSON.parse(rawData);
 
-					// console.log('The JSON data parsed from the Web service response is:', jsonData);
+					if (descriptor.preprocessJsonResponseData) {
+						jsonData = descriptor.preprocessJsonResponseData(jsonData);
+						logFunction('The JSON data parsed from the Web service response after preprocessing is:', jsonData);
+					}
+
+					logFunction('The JSON data parsed from the Web service response is:', jsonData);
 
 					deferred.resolve(jsonData);
 				} catch (jsonParseError) {
