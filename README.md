@@ -50,7 +50,11 @@ Sample usage of the npm package:
 			console.error('httpJsonRequest.get() succeeded! Returned JSON data is:\n\n', jsonResult);
 		})
 		.fail(error => {
-			console.error('httpJsonRequest.get() returned an error:\n', error);
+			console.error('httpJsonRequest.get() returned an error:\n\n', error);
+
+			if (error.statusCode) {
+				console.error('HTTP status code is', error.statusCode, error.statusMessage);
+			}
 		})
 		.done();
 

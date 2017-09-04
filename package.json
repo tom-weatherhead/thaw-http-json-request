@@ -15,9 +15,7 @@
     "lint": "grunt eslint",
     "mocha": "grunt mochaTest",
     "nsp": "grunt nsp",
-    "smoke": "node test/smoke.js",
-    "test": "grunt test",
-    "watch": "grunt watch"
+    "test": "grunt"
   },
   "dependencies": {
     "q": "^1.5.0"
@@ -41,6 +39,7 @@
     "chai",
     "eslint",
     "grunt",
+	"http",
     "json",
     "mocha",
     "node",
