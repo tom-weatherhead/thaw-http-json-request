@@ -27,7 +27,7 @@ API:
 		- noHttps: Set to true if you wish to send the request via HTTP rather than HTTPS. Defaults to false.
 		- headers: Additional key/value pairs to send as part of the HTTP[S] GET request. No default value.
 		- verbose: If true, log informational messages via console.log(). Defaults to false.
-		- preprocessRawResponseData(rawData) : A function that transforms the body of the HTTP[S] response as text, before it is parsed as JSON. No default value.
+		- preprocessRawResponseData : A regular expression (with exactly one capture group) or a function that transforms the body of the HTTP[S] response as text, before it is parsed as JSON. If preprocessRawResponseData is a regular expression, then the captured text will be the text that is parsed as JSON in the next stage. No default value.
 		- preprocessJsonResponseData(jsonData) : A function that transforms the JSON value after parsing and before it is returned. No default value.
 
 	- Returns: A promise from the npm package "q" :
