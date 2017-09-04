@@ -32,6 +32,7 @@ describe('App', function () {
 		});
 	});
 
+	// Or use https://httpbin.org/ ; e.g. https://httpbin.org/status/404 or https://httpbin.org/status/418
 	describe('www.jsontest.com/foo Failure', function () {
 		it('Rocks!', function (done) {
 			const descriptor = {

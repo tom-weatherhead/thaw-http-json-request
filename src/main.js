@@ -4,20 +4,43 @@
 
 const Q = require('q');	// Promises for JavaScript. See https://www.npmjs.com/package/q and https://github.com/kriskowal/q
 
+function createError (errorMessage, statusCode, statusMessage) {
+
+	if (statusCode) {
+		errorMessage = errorMessage + '\nHTTP[S] status: ' + statusCode;
+
+		if (statusMessage) {
+			errorMessage = errorMessage + ' ' + statusMessage;
+		}
+	}
+
+	statusCode = statusCode || 0;
+	statusMessage = statusMessage || 'Unspecified';
+
+	let error = new Error(errorMessage);
+
+	error.statusCode = statusCode;
+	error.statusMessage = statusMessage;
+
+	return error;
+}
+
 module.exports = {
 
 	get: (descriptor = {}) => {
 		let deferred = Q.defer();
 
 		let logFunction;
+		let errorFunction;
 
 		if (descriptor.verbose) {
 			logFunction = console.log;
+			errorFunction = console.error;
 		} else {
 			logFunction = () => {};
+			errorFunction = () => {};
 		}
 
-		// console.log('descriptor is', descriptor);
 		logFunction('descriptor is', descriptor);
 
 		let requestParameters = {
@@ -33,7 +56,6 @@ module.exports = {
 			requestParameters.headers = descriptor.headers;
 		}
 
-		// console.log('requestParameters is', requestParameters);
 		logFunction('requestParameters is', requestParameters);
 
 		let http_or_https;
@@ -45,36 +67,26 @@ module.exports = {
 		}
 
 		/* let request = */ http_or_https.get(requestParameters, response => {
-			// console.log('The response from the Web service is:', response);
 			logFunction('The response from the Web service is:', response);
 
-			const statusCode = response.statusCode;
-			const statusMessage = response.statusMessage;
-			const contentType = response.headers['content-type'];
+			let statusCode = response.statusCode;
+			let statusMessage = response.statusMessage;
+			let contentType = response.headers['content-type'];
 
 			logFunction('Response: Status code:', statusCode, statusMessage);
-			// logFunction('Response: Headers:', response.headers);
 			logFunction('Response: Content type:', contentType);
 
 			let error;
 
 			if (statusCode !== 200) {
-				// error = new Error(`HTTP request to financial data service failed.\nHTTP status code: ${statusCode}`);
-				error = new Error('HTTP[S] request to Web service failed.\nHTTP[S] status: ' + statusCode + ' ' + statusMessage);
-				error.statusCode = response.statusCode;
-				error.statusMessage = response.statusMessage;
+				error = createError('HTTP[S] request to Web service failed.', statusCode, statusMessage);
 			// } else if (!/^application\/json/.test(contentType)) {
-				// Google Finance does not respond with application/json.
 				// error = new Error(`Invalid content-type.\nExpected application/json but received ${contentType}`);
 			}
 
 			if (error) {
-				// var errorMessage = 'Error in https-json-request.service: ' + error.message;
-
-				// console.error(errorMessage);
-				// console.error(error);
+				errorFunction(error);
 				response.resume();				// Consume the response data to free up memory.
-				// deferred.reject(errorMessage);
 				deferred.reject(error);
 
 				return;
@@ -93,6 +105,7 @@ module.exports = {
 					logFunction('The raw data from the Web service response is:', rawData);
 
 					// See https://stackoverflow.com/questions/4339288/typeof-for-regexp :
+
 					if (descriptor.preprocessRawResponseData instanceof RegExp) {
 						var rawDataRexExMatch = descriptor.preprocessRawResponseData.exec(rawData);
 
@@ -118,17 +131,20 @@ module.exports = {
 				} catch (jsonParseError) {
 					let jsonParseErrorMessage = 'JSON.parse error: ' + jsonParseError.message;
 
-					console.error(jsonParseErrorMessage);
-					deferred.reject(jsonParseErrorMessage);
+					error = new Error(jsonParseErrorMessage);
+					errorFunction(jsonParseErrorMessage);
+					errorFunction(error);
+					response.resume();				// Consume the response data to free up memory.
+					deferred.reject(error);
 				}
 			});
 		}).on('error', error => {
-			let errorMessage = 'Inside on(error) : Error in https-json-request.service: ' + error.message;
+			let errorMessage = 'Error in thaw-http-json-request inside on(error) : ' + error.message;
 
-			// console.error(`Got error: ${error.message}`);
-			console.error(error);
-			console.error(errorMessage);
-			deferred.reject(errorMessage);
+			error = new Error(errorMessage);
+			errorFunction(errorMessage);
+			errorFunction(error);
+			deferred.reject(error);
 		});
 
 		// request.on('socket', function (socket) {
@@ -144,5 +160,3 @@ module.exports = {
 		return deferred.promise;
 	}
 };
-
-// **** The end ****
