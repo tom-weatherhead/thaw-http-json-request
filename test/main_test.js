@@ -37,8 +37,10 @@ describe('App', function () {
 		it('Rocks!', function (done) {
 			const descriptor = {
 				noHttps: true,
-				host: 'www.jsontest.com',
-				path: '/foo'
+				// host: 'www.jsontest.com',
+				// path: '/foo'
+				host: 'httpbin.org',
+				path: '/status/404'
 			};
 
 			httpJsonRequest
@@ -51,7 +53,8 @@ describe('App', function () {
 				.fail(error => {
 					expect(error).to.be.not.null;						// eslint-disable-line no-unused-expressions
 					expect(error.statusCode).to.be.equal(404);
-					expect(error.statusMessage).to.be.equal('Not Found');
+					// expect(error.statusMessage).to.be.equal('Not Found');
+					expect(error.statusMessage).to.be.equal('NOT FOUND');
 					done();
 				})
 				.done();

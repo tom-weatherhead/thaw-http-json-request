@@ -1,4 +1,7 @@
 # thaw-http-json-request
+
+[![build status](https://secure.travis-ci.org/tom-weatherhead/thaw-http-json-request.svg)](http://travis-ci.org/tom-weatherhead/thaw-http-json-request)  [![downloads](https://img.shields.io/npm/dt/thaw-http-json-request.svg)](https://www.npmjs.com/package/thaw-http-json-request)
+
 A library for sending requests to Web services and handling JSON responses.
 
 Git installation instructions:

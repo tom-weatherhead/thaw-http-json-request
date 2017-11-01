@@ -39,7 +39,7 @@
     "chai",
     "eslint",
     "grunt",
-	"http",
+    "http",
     "json",
     "mocha",
     "node",
